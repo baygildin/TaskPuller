@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="txt_start">Старт</string>
+    <string name="txt_stop">Стоп</string>
+    <string name="txt_reset">Сброс</string>
+    <string name="txt_time_in_minutes">Время в минутах</string>
+    <string name="timer_restored">Таймер восстановлен</string>
+    <string name="txt_timer_started">Таймер запущен</string>
+    <string name="txt_timer">Таймер</string>
+    <string name="txt_timer_expired">Таймер завершён</string>
+    <string name="txt_time_is_up">Время вышло</string>
+    <string name="txt_remains_minutes">Осталось %1$s мин.</string>
+</resources>
