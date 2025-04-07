@@ -20,7 +20,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
 
-
 class TimerService() : Service() {
 
     private val serviceScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
