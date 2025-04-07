@@ -20,11 +20,5 @@ fun AppNavigation(navController: NavHostController, modifier: Modifier) {
                 viewModel = hiltViewModel()
             )
         }
-
-//        composable("inbox") {
-//            AdaptiveInboxNotesScreen(
-//                viewModel = hiltViewModel(),
-//            )
-//        }
     }
 }
