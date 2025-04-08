@@ -46,23 +46,18 @@ class TimerViewModel @Inject constructor() : ViewModel() {
 
     fun startTimer(minutes: Long) {
         if (_timerState.value.isRunning) return
-
         totalTime = minutes * 60 * 1000L
         val startTime = System.currentTimeMillis()
         val endTime = startTime + totalTime
-
         _timerState.value = TimerState(remainingTime = totalTime, isRunning = true)
-
         timerJob = viewModelScope.launch {
             while (true) {
                 val now = System.currentTimeMillis()
                 val remaining = endTime - now
-
                 if (remaining <= 0L) {
                     _timerState.value = TimerState(remainingTime = 0L, isRunning = false)
                     break
                 }
-
                 _timerState.value = _timerState.value.copy(remainingTime = remaining)
                 delay(1000L)
             }
@@ -73,17 +68,14 @@ class TimerViewModel @Inject constructor() : ViewModel() {
         timerJob?.cancel()
         val startTime = System.currentTimeMillis()
         val endTime = startTime + initial
-
         timerJob = viewModelScope.launch {
             while (true) {
                 val now = System.currentTimeMillis()
                 val remaining = endTime - now
-
                 if (remaining <= 0L) {
                     _timerState.value = TimerState(remainingTime = 0L, isRunning = false)
                     break
                 }
-
                 _timerState.value = _timerState.value.copy(remainingTime = remaining)
                 delay(1000L)
             }
@@ -91,7 +83,6 @@ class TimerViewModel @Inject constructor() : ViewModel() {
     }
 
     fun stopTimer() {
-
         timerJob?.cancel()
         _timerState.value = _timerState.value.copy(isRunning = false)
     }
