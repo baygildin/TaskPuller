@@ -45,6 +45,7 @@ class TimerService() : Service() {
         startForeground(NOTIFICATION_ID, buildNotification(durationMillis))
 
         timerJob = serviceScope.launch {
+            var lastMinuteReported = -1L
             while (true) {
                 val elapsed = System.currentTimeMillis() - startTimeMillis
                 val remaining = durationMillis - elapsed
@@ -55,10 +56,12 @@ class TimerService() : Service() {
                     break
                 }
 
-                if (TimeUnit.MILLISECONDS.toSeconds(remaining) % 60 == 0L) {
+                val currentMinute = TimeUnit.MILLISECONDS.toMinutes(remaining)
+                if (currentMinute != lastMinuteReported) {
+                    lastMinuteReported = currentMinute
                     updateNotification(remaining)
                 }
-                delay(1000L)
+                delay(500L)
             }
         }
         return START_STICKY
@@ -69,6 +72,8 @@ class TimerService() : Service() {
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle(getString(R.string.txt_timer_started))
             .setContentText(getString(R.string.txt_remains_minutes, minutes.toString()))
+            .setWhen(System.currentTimeMillis())
+            .setOnlyAlertOnce(false)
             .setSmallIcon(R.drawable.baseline_alarm_24)
             .setOngoing(true)
             .build()
@@ -84,7 +89,7 @@ class TimerService() : Service() {
         val channel = NotificationChannel(
             CHANNEL_ID,
             getString(R.string.txt_timer),
-            NotificationManager.IMPORTANCE_DEFAULT
+            NotificationManager.IMPORTANCE_HIGH
         )
         val manager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         manager.createNotificationChannel(channel)

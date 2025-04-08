@@ -23,8 +23,6 @@ class TimerViewModel @Inject constructor() : ViewModel() {
     private var totalTime: Long = 0L
 
 
-
-
     fun checkSavedTimer(context: Context) {
         viewModelScope.launch {
             val saved = TimerPreferences.getTimer(context)
@@ -48,38 +46,43 @@ class TimerViewModel @Inject constructor() : ViewModel() {
 
     fun startTimer(minutes: Long) {
         if (_timerState.value.isRunning) return
-
         totalTime = minutes * 60 * 1000L
+        val startTime = System.currentTimeMillis()
+        val endTime = startTime + totalTime
         _timerState.value = TimerState(remainingTime = totalTime, isRunning = true)
-
-
         timerJob = viewModelScope.launch {
-            while (_timerState.value.remainingTime > 0) {
+            while (true) {
+                val now = System.currentTimeMillis()
+                val remaining = endTime - now
+                if (remaining <= 0L) {
+                    _timerState.value = TimerState(remainingTime = 0L, isRunning = false)
+                    break
+                }
+                _timerState.value = _timerState.value.copy(remainingTime = remaining)
                 delay(1000L)
-                val newTime = _timerState.value.remainingTime - 1000L
-                _timerState.value = _timerState.value.copy(remainingTime = newTime)
-
             }
-            _timerState.value = _timerState.value.copy(isRunning = false)
         }
     }
 
     private fun startTimerInternal(initial: Long) {
         timerJob?.cancel()
+        val startTime = System.currentTimeMillis()
+        val endTime = startTime + initial
         timerJob = viewModelScope.launch {
-            var remaining = initial
-            while (remaining > 0) {
-                delay(1000L)
-                remaining -= 1000L
+            while (true) {
+                val now = System.currentTimeMillis()
+                val remaining = endTime - now
+                if (remaining <= 0L) {
+                    _timerState.value = TimerState(remainingTime = 0L, isRunning = false)
+                    break
+                }
                 _timerState.value = _timerState.value.copy(remainingTime = remaining)
+                delay(1000L)
             }
-            _timerState.value = _timerState.value.copy(isRunning = false)
-
         }
     }
 
     fun stopTimer() {
-
         timerJob?.cancel()
         _timerState.value = _timerState.value.copy(isRunning = false)
     }
